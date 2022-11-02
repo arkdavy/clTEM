@@ -1,0 +1,54 @@
+easyblock = 'CMakeMake'
+
+name = 'clTEM'
+version = '0.3.4'
+
+homepage = 'https://www.openfoam.com/'
+description = """clTEM is an OpenCL accelerated multislice program for simulating images
+ from a transmission electron microscope, originally written by Dr Adam Dyson as part of his PhD."""
+
+
+toolchain = {'name': 'fosscuda', 'version': '2020b'}
+toolchainopts = {'cstd': 'c++17', 'debug': 'True', 'extra_cxxflags': '-O0'}
+
+source_urls = ['https://github.com/JJPPeters/clTEM/archive/refs/tags/']
+sources = ['v%(version)s.tar.gz']
+
+patches = [
+   'clTEM_modern_json_from_eb.patch',
+   'clTEM_move_win32_preprocessor_flags.patch',
+]
+
+dependencies = [
+    ('clFFT', '2.12.2'),
+    ('Qt5', '5.14.2'),
+    ('QCustomPlot', '2.1.0'),
+    ('LibTIFF', '4.1.0'),
+    ('nlohmann_json', '3.10.4'),
+    ('Easylogging++', 'v9.97.0'),
+    ('Eigen', '3.3.9'),
+]
+
+builddependencies = [
+    ('CMake', '3.18.4')
+]
+
+preconfigopts = ' JSON_ROOT=${EBROOTNLOHMANN_JSON} EASYLOGGINGPP_LIBRARY=${EBROOTEASYLOGGINGPLUSPLUS}/lib '
+
+install_cmd = "cmake -P cmake_install.cmake"
+install_cmd  = "mkdir -p bin && cp -a clTEM_*  bin/ && "
+install_cmd += "mkdir -p lib && cp -a *.a *.so lib/ && "
+install_cmd += "cp -ra %(builddir)s/%(name)s-%(version)s/{ccds,kernels,microscopes,params,scripts} bin/ && "
+install_cmd += "mkdir -p share && cp -ra %(builddir)s/%(name)s-%(version)s/README.md share/ && "
+install_cmd += "mv bin lib share %(installdir)s && ln -s %(installdir)s/lib/ %(installdir)s/lib64 "
+
+sanity_check_paths = {
+    'files': ['bin/clTEM_gui', 'lib/libsimulation.a'],
+    'dirs': ['bin', 'lib']
+}
+
+sanity_check_commands = [
+    "clTEM_cmd --help",
+]
+
+moduleclass = 'phys'

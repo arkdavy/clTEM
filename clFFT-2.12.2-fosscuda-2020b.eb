@@ -1,0 +1,32 @@
+easyblock = 'CMakeMake'
+
+name = 'clFFT'
+version = '2.12.2'
+
+homepage = 'https://github.com/clMathLibraries/clFFT'
+
+description = """clFFT is a software library containing FFT functions written in OpenCL.
+In addition to GPU devices, the library also supports running on CPU devices to facilitate 
+debugging and heterogeneous programming."""
+
+toolchain = {'name': 'fosscuda', 'version': '2020b'}
+
+source_urls = ['https://github.com/clMathLibraries/clFFT/archive/refs/tags/']
+sources = ['v%(version)s.tar.gz']
+
+builddependencies = [
+    ('CMake', '3.18.4')
+]
+
+start_dir = 'src'
+
+install_cmd  = 'make install && '
+install_cmd += 'cp -a %(builddir)s/%(name)s-%(version)s/{LICENSE,NOTICE} %(installdir)s/share/%(name)s/'
+
+sanity_check_paths = {
+    'files' : ['include/clFFT.h'], 
+    'dirs'  : ['lib', 'include']
+}
+
+
+moduleclass = 'numlib'

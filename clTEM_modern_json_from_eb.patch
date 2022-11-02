@@ -1,0 +1,20 @@
+reflect non-standard location of header files for nlohmann_json in EB
+--- ./clTEM-0.3.4_org/src/simulation/cmake/modules/FindModernJson.cmake	2021-07-20 13:33:59.000000000 +0100
++++ ./clTEM-0.3.4_find_mjson/src/simulation/cmake/modules/FindModernJson.cmake	2022-04-30 16:13:48.138338000 +0100
+@@ -37,7 +37,8 @@
+ ENDIF (JSON_INCLUDE_DIRS)
+ 
+ FIND_PATH(JSON_ROOT_DIR
+-        NAMES include/json.h include/json.hpp
++        NAMES json.h json.hpp
++        PATH_SUFFIXES include/nlohmann
+         PATHS JSON_ROOT
+         PATHS ENV JSON_ROOT
+         DOC "Modern JSON for C++ root directory.")
+@@ -55,4 +56,4 @@
+ # all listed variables are TRUE
+ INCLUDE (FindPackageHandleStandardArgs)
+ FIND_PACKAGE_HANDLE_STANDARD_ARGS(ModernJson DEFAULT_MSG JSON_INCLUDE_DIRS)
+-MARK_AS_ADVANCED(JSON_INCLUDE_DIRS)
+\ No newline at end of file
++MARK_AS_ADVANCED(JSON_INCLUDE_DIRS)

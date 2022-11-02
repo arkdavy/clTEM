@@ -1,0 +1,34 @@
+easyblock = 'CMakeMake'
+
+name = 'Easylogging++'
+version='v9.97.0'
+local_version = '9.97.0'
+
+homepage = 'https://github.com/amrayn/easyloggingpp'
+description = """Easylogging++ is single header efficient logging library for C++ applications."""
+
+source_urls = ['https://github.com/amrayn/easyloggingpp/archive/refs/tags/']
+sources = ['%(version)s.tar.gz']
+
+toolchain = {'name': 'GCCcore', 'version': '10.2.0'}
+toolchainopts = {'pic': True}
+
+modextravars = {
+    'EASYLOGGINGPP_ROOT': '%(installdir)s',
+}
+
+configopts = ' -Dbuild_static_lib=yes '
+
+install_cmd  = "make install && mkdir -p %(installdir)s/share/%(name)s && "
+install_cmd += "cp -a %(builddir)s/easyloggingpp-{}/LICENSE %(installdir)s/share/%(name)s/".format(local_version)
+
+sanity_check_paths = {
+    'files' : ['include/easylogging++.cc', 'include/easylogging++.h'], 
+    'dirs'  : ['share', 'include']
+}
+
+builddependencies = [
+    ('CMake', '3.18.4')
+]
+
+moduleclass = 'tools'

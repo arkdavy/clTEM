@@ -1,0 +1,88 @@
+easyblock = 'CmdCp'
+
+name = 'QCustomPlot'
+version = '2.1.0'
+
+homepage = 'https://www.qcustomplot.com'
+description = """QCustomPlot is a Qt C++ widget for plotting and data visualization. 
+It has no further dependencies and is well documented. This plotting library focuses 
+on making good looking, publication quality 2D plots, graphs and charts, as well as 
+offering high performance for realtime visualization applications. Have a look at the 
+Setting Up and the Basic Plotting tutorials to get started. QCustomPlot can export to 
+various formats such as vectorized PDF files and rasterized images like PNG, JPG and BMP. 
+QCustomPlot is the solution for displaying of realtime data inside the application 
+as well as producing high quality plots for other media."""
+
+toolchain = {'name': 'GCCcore', 'version': '10.2.0'}
+toolchainopts = {'pic': True}
+
+source_urls = ['https://www.qcustomplot.com/release/%(version)sfixed/']
+sources = [
+{
+           'download_filename': '%s.tar.gz' % name,
+           'filename': SOURCE_TAR_GZ,
+           'extract_cmd': "tar -xzf %s -C %(builddir)s"
+}]
+
+dependencies = [
+    ('Qt5', '5.14.2')
+]
+
+local_sharedlib_pro = """
+#
+#  Project to compile QCustomPlot as shared library (.so/.dll) from the amalgamated sources
+#
+
+QT += core gui
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
+
+greaterThan(QT_MAJOR_VERSION, 4): CONFIG += c++11
+lessThan(QT_MAJOR_VERSION, 5): QMAKE_CXXFLAGS += -std=c++11
+
+DEFINES += QCUSTOMPLOT_COMPILE_LIBRARY
+TEMPLATE = lib
+CONFIG += debug_and_release build_all
+static {
+  CONFIG += static
+} else {
+  CONFIG += shared
+}
+
+VERSION = 2.1.0
+
+TARGET = qcustomplot
+CONFIG(debug, debug|release) {
+  TARGET = $$join(TARGET,,,d) # if compiling in debug mode, append a "d" to the library name
+  QMAKE_TARGET_PRODUCT = "QCustomPlot (debug mode)"
+  QMAKE_TARGET_DESCRIPTION = "Plotting library for Qt (debug mode)"
+} else {
+  QMAKE_TARGET_PRODUCT = "QCustomPlot"
+  QMAKE_TARGET_DESCRIPTION = "Plotting library for Qt"
+}
+QMAKE_TARGET_COMPANY = "www.qcustomplot.com"
+QMAKE_TARGET_COPYRIGHT = "Copyright (C) by Emanuel Eichhammer"
+
+SOURCES += ./qcustomplot.cpp
+HEADERS += ./qcustomplot.h
+
+"""
+
+build_cmd = "echo '%s' > sharedlib-compilation.pro && ${EBROOTQT5}/bin/qmake && make && " % local_sharedlib_pro
+build_cmd += "mkdir -p include && cp qcustomplot.h  include/ && "
+build_cmd += "mkdir -p lib && cp libqcustomplot.so* libqcustomplotd.so* lib/ &&"
+build_cmd += "mkdir -p share && cp GPL.txt share/ "
+
+sanity_check_paths = {
+    'files' : ['lib/libqcustomplot.so', 'lib/libqcustomplotd.so', 'include/qcustomplot.h'], 
+    'dirs'  : ['lib', 'include']
+}
+
+modextravars = {
+    'QCUSTOMPLOT_ROOT': '%(installdir)s',
+}
+
+cmds_map = [('.*', build_cmd)]
+
+files_to_copy = ['include', 'lib', 'share']
+
+moduleclass = 'vis'

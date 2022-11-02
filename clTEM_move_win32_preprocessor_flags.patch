@@ -1,0 +1,28 @@
+change location of OS preprocessor flags
+--- ./clTEM-0.3.4_org/src/gui/controls/borderlessdialog.h	2021-07-20 13:33:59.000000000 +0100
++++ ./clTEM-0.3.4_win32_preprocessor_fix/src/gui/controls/borderlessdialog.h	2022-05-10 14:35:08.409030000 +0100
+@@ -58,9 +58,10 @@
+ 
+     bool nativeEvent(const QByteArray& eventType, void *message, long *result) override;
+ 
++#endif
+ private:
+     QScreen* old_screen;
+-
++#ifdef _WIN32
+     // This is to fix an error when moving the borderless window between screens
+     // basically I detect when I have moved between screens, and just set the size to be the same!
+     void moveEvent(QMoveEvent * e) override
+--- ./clTEM-0.3.4_org/src/gui/controls/borderlesswindow.h	2021-07-20 13:33:59.000000000 +0100
++++ ./clTEM-0.3.4_win32_preprocessor_fix/src/gui/controls/borderlesswindow.h	2022-05-10 14:35:08.299796000 +0100
+@@ -58,8 +58,10 @@
+ 
+     bool nativeEvent(const QByteArray& eventType, void *message, long *result) override;
+ 
++#endif
+ private:
+     QScreen* old_screen;
++#ifdef _WIN32
+ 
+     // This is to fix an error when moving the borderless window between screens
+     // basically I detect when I have moved between screens, and just set the size to be the same!
